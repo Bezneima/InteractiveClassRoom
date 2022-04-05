@@ -3,7 +3,9 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import { io, Socket } from "socket.io-client";
+//const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io('http://localhost:3001/');
+//socket.emit("hello");
 ReactDOM.render(
   <React.StrictMode>
     <App />
