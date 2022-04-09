@@ -1,26 +1,19 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
+import {Route, Routes} from "react-router";
 import './App.css';
+import {ClassPage, HomePage} from "./Components/Pages";
+import {useSocket} from "./Hooks/useSocket";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [isConnected, setIsConnected] = useState(false);
+    const socket = useSocket(setIsConnected);
+    return (
+        isConnected ? (<Routes>
+            <Route path="/" element={<HomePage/>}/>
+            <Route path="/class/:classId" element={<ClassPage socket={socket}/>}/>
+            <Route element={<div>Упс ничего не найдено 404</div>}/>
+        </Routes>) : (<>Загружаюсь </>)
+    )
 }
 
 export default App;
