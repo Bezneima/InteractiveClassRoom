@@ -17,5 +17,8 @@ export const Video: React.FC<ClassMemberVideo> = ({stream, muted}) => {
         }
     }, [stream]);
 
-    return <video muted={muted} ref={videoRef}/>;
+    return <>
+        <video id='1' autoPlay preload="metadata" muted={muted} ref={videoRef}/>
+        <video id="2" autoPlay preload="metadata" muted={muted} ref={videoRef}/>
+    </>;
 };

@@ -21,7 +21,7 @@ export const ClassPage: React.FC<TClassPage> = ({socket}) => {
     const isMemberStreamExist = useCallback((id: string) => {
         return membersStreamsRef.current.find((member) => member.id === id);
     }, []);
-
+    console.log('membersStreams',membersStreams);
     useEffect(() => {
         navigator.mediaDevices
             .getUserMedia({
@@ -30,7 +30,7 @@ export const ClassPage: React.FC<TClassPage> = ({socket}) => {
             }).then((stream) => {
             setMembersStreams((prevState) => [...prevState, {id: stream.id, stream: stream, muted: true}]);
             setMyStream(stream);
-            console.log(params);
+
             socket.emit('join-room', params.classId, stream.id);
         });
     }, [params, params.classId, socket]);
@@ -70,6 +70,7 @@ export const ClassPage: React.FC<TClassPage> = ({socket}) => {
             //Мы отвечаем на что-то
             socket.on("user-connected", (userId) => {
                 const call = peer.call(userId, myStream);
+                console.log('connected', call);
                 if (call) {
                     call.on('stream', onAnswerHandler);
                 }
@@ -83,6 +84,7 @@ export const ClassPage: React.FC<TClassPage> = ({socket}) => {
     }, [isMemberStreamExist, membersStreams, myStream, onAnswerHandler, onCallHandler, params.classId, removeDisconnectedUser, socket]);
 
     const getMembersVideos = useCallback(() => {
+        console.log(membersStreams);
         return (
             membersStreams.map((memberStream) => {
                 return <Video {...memberStream} key={memberStream.id}/>;
