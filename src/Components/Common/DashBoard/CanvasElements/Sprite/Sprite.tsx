@@ -1,6 +1,5 @@
-import React, {Suspense, useRef, useState} from "react";
+import React, {Suspense} from "react";
 import * as THREE from "three";
-import {useFrame} from "@react-three/fiber";
 
 export const Sprite = (props: JSX.IntrinsicElements['mesh']) => {
     const material = new THREE.SpriteMaterial({color: 'red'});

@@ -24,7 +24,7 @@ export const Camera = () => {
             if (cameraPos.current.zoom < 1) cameraPos.current.zoom = 1;
         } else {
             cameraPos.current.x -= e.deltaX * 0.5;
-            cameraPos.current.y += e.deltaY * 0.5;
+            cameraPos.current.y -= e.deltaY * 0.5;
         }
         render();
     }, [render]);

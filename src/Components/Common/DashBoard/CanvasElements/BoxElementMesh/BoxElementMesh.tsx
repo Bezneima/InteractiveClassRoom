@@ -11,7 +11,7 @@ export type TBox = {
     color: string;
 }
 
-export const BoxElement: React.FC<TBox> = ({width, height, depth, position, color}) => {
+export const BoxElementMesh: React.FC<TBox> = ({width, height, depth, position, color}) => {
     const mesh = useRef<THREE.Mesh>(null!)
     const material = new THREE.PointsMaterial({color: color});
     return (
