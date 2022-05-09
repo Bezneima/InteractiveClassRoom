@@ -1,34 +1,28 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect} from "react";
 import {useThree} from "@react-three/fiber";
-import {Mesh, PointsMaterial} from "three";
-import {selectionPointerDown, selectionPointerMove, selectionPointerUp} from "./MouseService/MouseService";
-import {useCanvasDispatch, useCanvasState} from "../../Context/CanvasContext/CanvasContext";
+import {useCanvasStore} from "../../../../Store/hooks";
+import {observer} from "mobx-react-lite";
+import {Vector2} from "three";
 
-export const MouseController = () => {
-    const state = useCanvasState();
-    console.log('Внутри мышки', state.mode);
-    const dashBoardDispatch = useCanvasDispatch();
-    const mesh = useRef<Mesh>(null!);
-    const material = new PointsMaterial({color: 'green'});
+export const MouseController = observer(() => {
+    const canvasStore = useCanvasStore();
     const {camera, gl, mouse} = useThree();
-    //Этот реф нужен, тк события глобальные и внутри них будет такой-же как при создании значение.
-    const isSelecting = useRef(false);
 
     const pointerDown = useCallback(() => {
-        isSelecting.current = true;
-        selectionPointerDown(dashBoardDispatch, mouse, camera, state);
-    }, [camera, dashBoardDispatch, mouse, state]);
+        canvasStore.setIsSelecting(true);
+        canvasStore.selectionPointerDown(new Vector2(mouse.x * window.innerWidth / 2 + camera.position.x, mouse.y * window.innerHeight / 2 + camera.position.y));
+    }, [camera, canvasStore, mouse]);
 
     const pointerMove = useCallback(() => {
-        if (isSelecting && isSelecting.current) {
-            selectionPointerMove(dashBoardDispatch, mouse, camera, state);
+        if (canvasStore.isSelecting) {
+            canvasStore.selectionPointerMove(new Vector2(mouse.x * window.innerWidth / 2 + camera.position.x, mouse.y * window.innerHeight / 2 + camera.position.y));
         }
-    }, [camera, dashBoardDispatch, mouse, state]);
+    }, [camera, canvasStore, mouse]);
 
     const pointerUp = useCallback(() => {
-        isSelecting.current = false;
-        selectionPointerUp(dashBoardDispatch, mouse, camera, state);
-    }, [camera, dashBoardDispatch, mouse, state]);
+        canvasStore.setIsSelecting(false);
+        canvasStore.selectionPointerUp(new Vector2(mouse.x * window.innerWidth / 2 + camera.position.x, mouse.y * window.innerHeight / 2 + camera.position.y));
+    }, [camera, canvasStore, mouse]);
 
 
     useEffect(() => {
@@ -62,4 +56,4 @@ export const MouseController = () => {
         </Suspense>
     );
      */
-};
+});

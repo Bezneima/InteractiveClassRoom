@@ -1,19 +1,18 @@
 import {Camera, Vector2} from "three";
-import {createBox} from "../CreateElementService/CreateElementService";
-import {ECreationsStages} from "../CreateElementService/types";
-import {ECanvasMode, TCanvasDispatch, TCanvasState} from "../../../Context/CanvasContext/types";
+import {ECanvasMode} from "../../../../../Store/CanvasStore/types";
 
-export const selectionPointerDown = (dashBoardDispatch: TCanvasDispatch, mouse: Vector2, camera: Camera, state: TCanvasState) => {
+export const selectionPointerDown = (mouse: Vector2, camera: Camera, mode: ECanvasMode) => {
     const startPointV2 = new Vector2(mouse.x * window.innerWidth / 2 + camera.position.x, mouse.y * window.innerHeight / 2 + camera.position.y);
-    console.log(state.mode);
-    switch (state.mode) {
+    console.log(mode);
+    switch (mode) {
         case ECanvasMode.SelectMode:
             break;
         case ECanvasMode.CreateBoxMode:
             console.log('был тут');
-            createBox(dashBoardDispatch, ECreationsStages.start, startPointV2);
+            //createBox(ECreationsStages.start, startPointV2);
             break;
     }
+    /*
     dashBoardDispatch({
         type: "SelectingPointerDown",
         value: {
@@ -22,18 +21,23 @@ export const selectionPointerDown = (dashBoardDispatch: TCanvasDispatch, mouse: 
             endV2: new Vector2(mouse.x * window.innerWidth / 2 + camera.position.x, mouse.y * window.innerHeight / 2 + camera.position.y)
         }
     });
+
+     */
 };
 
-export const selectionPointerMove = (dashBoardDispatch: TCanvasDispatch, mouse: Vector2, camera: Camera, state: TCanvasState) => {
+export const selectionPointerMove = (mouse: Vector2, camera: Camera) => {
+    /*
     dashBoardDispatch({
         type: "SelectingPointerMove",
         value: {
             endV2: new Vector2(mouse.x * window.innerWidth / 2 + camera.position.x, mouse.y * window.innerHeight / 2 + camera.position.y)
         }
     });
+     */
 };
 
-export const selectionPointerUp = (dashBoardDispatch: TCanvasDispatch, mouse: Vector2, camera: Camera, state: TCanvasState) => {
+export const selectionPointerUp = (mouse: Vector2, camera: Camera) => {
+    /*
     const endPointV2 = new Vector2(mouse.x * window.innerWidth / 2 + camera.position.x, mouse.y * window.innerHeight / 2 + camera.position.y);
     const startPointV2 = state.selection.startV2;
     if (startPointV2) {
@@ -55,4 +59,5 @@ export const selectionPointerUp = (dashBoardDispatch: TCanvasDispatch, mouse: Ve
             }
         });
     }
+     */
 }

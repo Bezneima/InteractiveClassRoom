@@ -1,5 +1,6 @@
 import {useThree} from "@react-three/fiber";
 import React, {useCallback, useEffect, useRef, useState} from "react";
+import {useCanvasStore} from "../../../../Store/hooks";
 
 
 type CameraPos = {
@@ -9,14 +10,16 @@ type CameraPos = {
 }
 
 export const Camera = () => {
+    const canvasStore = useCanvasStore();
     const cameraPos = useRef<CameraPos>({x: 0, y: 0, zoom: 1})
     const {camera} = useThree();
 
     const render = useCallback(() => {
         camera.position.set(cameraPos.current.x, cameraPos.current.y, 1);
+        canvasStore.onCameraMove(cameraPos.current.x, cameraPos.current.y);
         camera.zoom = cameraPos.current.zoom;
         camera.updateProjectionMatrix();
-    }, [camera])
+    }, [camera, canvasStore])
 
     const windowOnWheelListener = useCallback((e) => {
         if (e.ctrlKey) {
@@ -24,7 +27,7 @@ export const Camera = () => {
             if (cameraPos.current.zoom < 1) cameraPos.current.zoom = 1;
         } else {
             cameraPos.current.x -= e.deltaX * 0.5;
-            cameraPos.current.y -= e.deltaY * 0.5;
+            cameraPos.current.y += e.deltaY * 0.5;
         }
         render();
     }, [render]);

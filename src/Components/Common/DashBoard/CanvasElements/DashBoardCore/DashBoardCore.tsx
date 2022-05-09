@@ -1,5 +1,7 @@
 import React from "react";
-import {CanvasRenderer} from "../CanvasRenderer/CanvasRenderer";
+import {Canvas} from "@react-three/fiber";
+import {RootStoreProvider} from "../../../../../Store/createStore";
+import {CanvasScene} from "../CanvasScene/CanvasScene";
 
 export const DashBoardCore: React.FC = () => {
     //const dashBoardDispatch = useDispatch(DashBoardDispatchContext);
@@ -21,7 +23,17 @@ export const DashBoardCore: React.FC = () => {
             {/*    <Button onClick={onSelectModeClick}>Select</Button>*/}
             {/*    <Button onClick={onCreateBoxModeClick}>CreateBox</Button>*/}
             {/*</div>*/}
-            <CanvasRenderer/>
+            <Canvas
+                resize={{scroll: false}}
+                orthographic
+                style={{width: '100wh', height: '100vh', zIndex: 0}}
+            >
+                {/*<ContextBridge>*/}
+                <RootStoreProvider>
+                    <CanvasScene/>
+                </RootStoreProvider>
+                {/*</ContextBridge>*/}
+            </Canvas>
         </>
     );
 }
