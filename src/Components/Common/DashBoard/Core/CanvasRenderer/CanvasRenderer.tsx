@@ -2,10 +2,12 @@ import React from "react";
 import {useCanvasStore} from "../../../../../Store/hooks";
 import {BoxElement, ERenderedElementType} from "../../../../../Store/CanvasStore/types";
 import {observer} from "mobx-react-lite";
+import {toJS} from "mobx";
 
 //Этой файл нужен будет чтобы потом понимать приоритеты рендеров и прочее и рендерить и выключать включать то что находится и не находится на камере...
 export const CanvasRenderer: React.FC = observer(() => {
     const canvasStore = useCanvasStore();
+    console.log('Рендерю', toJS(canvasStore.renderedElementsMap));
     const elements = canvasStore.renderedElements.map((element) => {
         switch (element.type) {
             case ERenderedElementType.Box:

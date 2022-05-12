@@ -58,6 +58,7 @@ export abstract class RenderedElement {
     }
 
     set endV2(value: Vector2) {
+        //console.log(`Я устанавливаю endV2 ${this.id}`, this);
         this._endV2 = value;
     }
 
@@ -70,14 +71,15 @@ export abstract class RenderedElement {
     }
 
     get isSelected(): boolean {
-        console.log('Зашел в isSelected', this._isSelected);
+        //console.log(`беру у BOX ${this.id} isSelected: ${this._isSelected}`);
         return this._isSelected;
     }
 
     set isSelected(value: boolean) {
-        console.log('Вот хули');
+        //console.log(`Изменил у BOX ${this.id} isSelected на ${value}`);
         this._isSelected = value;
     }
+
 }
 
 export class BoxElement extends RenderedElement {
@@ -86,20 +88,14 @@ export class BoxElement extends RenderedElement {
 
     constructor(id: number, startV2: Vector2, endV2: Vector2, zIndex: number, color: string = '#00FF00') {
         super(id, ERenderedElementType.Box, startV2, endV2, zIndex);
-
+        console.log('Конструктор', startV2, endV2);
         this._color = color;
-        this._zIndex = zIndex;
 
+        this._zIndex = zIndex;
         this._startV2 = startV2;
         this._endV2 = endV2;
-        this._mesh = <BoxElementMesh
-            id={this.id}
-            width={Math.abs(startV2.x - endV2.x)}
-            height={Math.abs(startV2.y - endV2.y)}
-            depth={zIndex}
-            position={new Vector3((endV2.x + startV2.x) / 2, (endV2.y + startV2.y) / 2, zIndex)}
-            color={color}
-        />;
+
+        this._mesh = <BoxElementMesh id={this.id} />;
     }
 
     get mesh(): JSX.Element {
@@ -110,19 +106,6 @@ export class BoxElement extends RenderedElement {
         this._mesh = value;
     }
 
-    set endV2(value: Vector2) {
-        this.mesh = <BoxElementMesh
-            id={this.id}
-            width={Math.abs(this.startV2.x - value.x)}
-            height={Math.abs(this.startV2.y - value.y)}
-            depth={this.zIndex}
-            position={new Vector3((value.x + this.startV2.x) / 2, (value.y + this.startV2.y) / 2, 0)}
-            color={this.color}
-
-        />;
-        this._endV2 = value;
-    }
-
     get color(): string {
         return this._color;
     }
@@ -131,8 +114,6 @@ export class BoxElement extends RenderedElement {
         this._color = value;
     }
 
-    set isSelected(value: boolean) {
-        this._isSelected = value;
-    }
-
 }
+// подумать нужно ли это вообще, просто не хочется искать по всем элементам у каждго элемента который рендерится обновлиась ли инфа или нет блять.
+export type TRenderedElementsMap = { [key: number]: RenderedElement };

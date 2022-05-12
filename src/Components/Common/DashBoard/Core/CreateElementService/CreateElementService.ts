@@ -1,11 +1,12 @@
 import {Vector2} from "three";
 import {ECreationsStages} from "./types";
-import {BoxElement, RenderedElement} from "../../../../../Store/CanvasStore/types";
+import {BoxElement, RenderedElement, TRenderedElementsMap} from "../../../../../Store/CanvasStore/types";
 import {clearSelectedElementsArray} from "../SelectionService/SelectionService";
-import {IObservableArray} from "mobx";
+import {IObservableArray, observable} from "mobx";
 
 export const createBox = (
     stage: ECreationsStages,
+    renderedElementsMap: TRenderedElementsMap,
     renderedElements: IObservableArray<RenderedElement>,
     selectedElements: IObservableArray<RenderedElement>,
     mousePos: Vector2,
@@ -15,23 +16,26 @@ export const createBox = (
     switch (stage) {
         case ECreationsStages.start:
             clearSelectedElementsArray(selectedElements);
-            const newBox = new BoxElement(getNewElementId(renderedElements), mousePos, new Vector2(mousePos.x, mousePos.y), 0);
+            const newId = getNewElementId(renderedElements);
+            const newBox = new BoxElement(newId, mousePos, mousePos, 0);
             renderedElements.push(newBox);
             selectedElements.push(newBox);
+            const map = renderedElementsMap;
+            map[newId] = newBox;
+            renderedElementsMap = Object.assign({}, map);
             break;
         case ECreationsStages.move:
             const selectedBox = selectedElements[0] as BoxElement;
             const selectedBoxIndex = renderedElements.findIndex((elem) => elem.id === selectedBox.id);
             if (selectedBoxIndex !== -1) {
-                const renderedElem = renderedElements[selectedBoxIndex];
-                renderedElem.endV2 = mousePos;
-                // Вот это звучит как тотальный пиздец, но как обновить значение чтобы стейт понял что нужно сделать ререндер я хз
-                // Проблема в том что если я меняю endV2 меняется локальная копия обьекта, а не элемент внутри массиваю
-                // Но вроде не лагает, и вроде все норм. Буду рад если поможешь поменять.
-                renderedElements.splice(selectedBoxIndex, 1, renderedElem);
+                renderedElements[selectedBoxIndex].endV2 = mousePos;
+                renderedElements.replace([...renderedElements]);
+                renderedElementsMap[selectedBox.id] = Object.assign({}, renderedElements[selectedBoxIndex] as BoxElement);
+                //renderedElementsMap = Object.assign({}, map);
             }
             break;
         case ECreationsStages.end:
+            /*
             if (!isMoved) {
                 const selectedBox = selectedElements[0] as BoxElement;
                 const selectedBoxIndex = renderedElements.findIndex((elem) => elem.id === selectedBox.id);
@@ -42,6 +46,7 @@ export const createBox = (
                     selectedElements.push(newBox);
                 }
             }
+             */
             break;
     }
 };
