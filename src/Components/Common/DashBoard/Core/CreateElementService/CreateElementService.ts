@@ -2,7 +2,7 @@ import {Vector2} from "three";
 import {ECreationsStages} from "./types";
 import {BoxElement, RenderedElement, TRenderedElementsMap} from "../../../../../Store/CanvasStore/types";
 import {clearSelectedElementsArray} from "../SelectionService/SelectionService";
-import {IObservableArray, observable} from "mobx";
+import {IObservableArray} from "mobx";
 
 export const createBox = (
     stage: ECreationsStages,
@@ -18,35 +18,34 @@ export const createBox = (
             clearSelectedElementsArray(selectedElements);
             const newId = getNewElementId(renderedElements);
             const newBox = new BoxElement(newId, mousePos, mousePos, 0);
-            renderedElements.push(newBox);
+            const elementIndexInArray = renderedElements.push(newBox) - 1;
             selectedElements.push(newBox);
-            const map = renderedElementsMap;
-            map[newId] = newBox;
-            renderedElementsMap = Object.assign({}, map);
+            renderedElementsMap[newId] = {indexInArray: elementIndexInArray, value: newBox};
             break;
         case ECreationsStages.move:
-            const selectedBox = selectedElements[0] as BoxElement;
-            const selectedBoxIndex = renderedElements.findIndex((elem) => elem.id === selectedBox.id);
-            if (selectedBoxIndex !== -1) {
-                renderedElements[selectedBoxIndex].endV2 = mousePos;
-                renderedElements.replace([...renderedElements]);
-                renderedElementsMap[selectedBox.id] = Object.assign({}, renderedElements[selectedBoxIndex] as BoxElement);
-                //renderedElementsMap = Object.assign({}, map);
+            const selectedBox = selectedElements[0];
+            const tmp = renderedElementsMap[selectedBox.id];
+            if (tmp) {
+                const prevBox = tmp.value as BoxElement;
+                const indexInArray = tmp.indexInArray;
+                const newBoxElement = new BoxElement(prevBox.id, prevBox.startV2, mousePos, prevBox.zIndex, prevBox.color);
+                renderedElementsMap[selectedBox.id] = {indexInArray: indexInArray, value: newBoxElement};
+                renderedElements[indexInArray] = newBoxElement;
             }
             break;
         case ECreationsStages.end:
-            /*
             if (!isMoved) {
                 const selectedBox = selectedElements[0] as BoxElement;
-                const selectedBoxIndex = renderedElements.findIndex((elem) => elem.id === selectedBox.id);
-                if (selectedBoxIndex !== -1) {
-                    const newBox = new BoxElement(getNewElementId(renderedElements), new Vector2(mousePos.x - 50, mousePos.y - 50), new Vector2(mousePos.x + 50, mousePos.y + 50), 0);
+                const tmp = renderedElementsMap[selectedBox.id];
+                const indexInArray = tmp.indexInArray;
+                if (tmp && indexInArray) {
+                    const newBox = new BoxElement(selectedBox.id, new Vector2(mousePos.x - 50, mousePos.y - 50), new Vector2(mousePos.x + 50, mousePos.y + 50), 0);
                     clearSelectedElementsArray(selectedElements);
-                    renderedElements.splice(selectedBoxIndex, 1, newBox);
+                    renderedElements[indexInArray] = newBox;
+                    renderedElementsMap[selectedBox.id] = {indexInArray: indexInArray, value: newBox};
                     selectedElements.push(newBox);
                 }
             }
-             */
             break;
     }
 };

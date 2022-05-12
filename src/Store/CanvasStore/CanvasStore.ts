@@ -18,7 +18,7 @@ export default class CanvasStore {
     renderedElementsMap: TRenderedElementsMap = {};
 
     constructor() {
-        makeAutoObservable(this, {renderedElementsMap: observable});
+        makeAutoObservable(this);
         this.canvasWidth = window.innerWidth;
         this.canvasHeight = window.innerHeight;
         this.cameraPosX = 0;
