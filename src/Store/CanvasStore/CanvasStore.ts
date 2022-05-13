@@ -78,6 +78,7 @@ export default class CanvasStore {
             case ECanvasMode.SelectMode:
                 break;
             case ECanvasMode.CreateBoxMode:
+                console.log('isMoved', this.isMoved);
                 createBox(ECreationsStages.end, this.renderedElementsMap, this.renderedElements, this.selectedElements, mouse, this.isMoved);
                 break;
         }

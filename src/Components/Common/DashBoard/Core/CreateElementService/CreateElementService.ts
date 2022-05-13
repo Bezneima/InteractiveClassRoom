@@ -7,8 +7,8 @@ import {IObservableArray} from "mobx";
 export const createBox = (
     stage: ECreationsStages,
     renderedElementsMap: TRenderedElementsMap,
-    renderedElements: IObservableArray<RenderedElement>,
-    selectedElements: IObservableArray<RenderedElement>,
+    renderedElements: Array<RenderedElement>,
+    selectedElements: Array<RenderedElement>,
     mousePos: Vector2,
     isMoved?: boolean
 ) => {
@@ -18,12 +18,30 @@ export const createBox = (
             clearSelectedElementsArray(selectedElements);
             const newId = getNewElementId(renderedElements);
             const newBox = new BoxElement(newId, mousePos, mousePos, 0);
+            renderedElements.push(newBox);
+            selectedElements.push(newBox);
+            break;
+        case ECreationsStages.move:
+            break;
+        case ECreationsStages.end:
+            if (!isMoved) {
+                const selectedBox = selectedElements[0] as BoxElement;
+                renderedElements[0].endV2 = new Vector2(mousePos.x + 50, mousePos.y + 50);
+                console.log(renderedElements[0]);
+            }
+            break;
+        /*
+        case ECreationsStages.start:
+            clearSelectedElementsArray(selectedElements);
+            const newId = getNewElementId(renderedElements);
+            const newBox = new BoxElement(newId, mousePos, mousePos, 0);
             const elementIndexInArray = renderedElements.push(newBox) - 1;
             selectedElements.push(newBox);
             renderedElementsMap[newId] = {indexInArray: elementIndexInArray, value: newBox};
             break;
         case ECreationsStages.move:
-            const selectedBox = selectedElements[0];
+            console.log('Какого-то хуя тут был');
+            const selectedBox = selectedElements[0] as BoxElement;
             const tmp = renderedElementsMap[selectedBox.id];
             if (tmp) {
                 const prevBox = tmp.value as BoxElement;
@@ -31,26 +49,31 @@ export const createBox = (
                 const newBoxElement = new BoxElement(prevBox.id, prevBox.startV2, mousePos, prevBox.zIndex, prevBox.color);
                 renderedElementsMap[selectedBox.id] = {indexInArray: indexInArray, value: newBoxElement};
                 renderedElements[indexInArray] = newBoxElement;
+                const selectedElementsIndex = selectedElements.findIndex(elem => elem.id === selectedBox.id);
+                selectedElements[selectedElementsIndex] = newBoxElement;
             }
             break;
         case ECreationsStages.end:
             if (!isMoved) {
                 const selectedBox = selectedElements[0] as BoxElement;
                 const tmp = renderedElementsMap[selectedBox.id];
-                const indexInArray = tmp.indexInArray;
-                if (tmp && indexInArray) {
-                    const newBox = new BoxElement(selectedBox.id, new Vector2(mousePos.x - 50, mousePos.y - 50), new Vector2(mousePos.x + 50, mousePos.y + 50), 0);
-                    clearSelectedElementsArray(selectedElements);
-                    renderedElements[indexInArray] = newBox;
-                    renderedElementsMap[selectedBox.id] = {indexInArray: indexInArray, value: newBox};
-                    selectedElements.push(newBox);
+                if (tmp) {
+                    const prevBox = tmp.value as BoxElement;
+                    const indexInArray = tmp.indexInArray;
+                    const newBoxElement = new BoxElement(prevBox.id, new Vector2(mousePos.x - 50, mousePos.y - 50), new Vector2(mousePos.x + 50, mousePos.y + 50), prevBox.zIndex, prevBox.color);
+                    renderedElementsMap[selectedBox.id] = {indexInArray: indexInArray, value: newBoxElement};
+                    renderedElements[indexInArray] = newBoxElement;
+                    const selectedElementsIndex = selectedElements.findIndex(elem => elem.id === selectedBox.id);
+                    selectedElements[selectedElementsIndex] = newBoxElement;
+                    console.log(selectedElements[0] === renderedElements[0]);
                 }
             }
             break;
+         */
     }
 };
 
-export const getNewElementId = (elements: IObservableArray<RenderedElement>): number => {
+export const getNewElementId = (elements: Array<RenderedElement>): number => {
     let result = 1;
     elements.forEach(elem => {
         if (elem.id >= result)

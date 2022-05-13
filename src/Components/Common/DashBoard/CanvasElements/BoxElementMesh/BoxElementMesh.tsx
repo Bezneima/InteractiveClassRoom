@@ -1,32 +1,24 @@
 import * as THREE from "three";
-import React, {Suspense, useEffect, useRef, useState} from "react";
+import React, {Suspense, useRef} from "react";
 import {DashBoardElementType} from "../../types";
-import {useCanvasStore} from "../../../../../Store/hooks";
 import {observer} from "mobx-react-lite";
 import {BoxElement} from "../../../../../Store/CanvasStore/types";
 import {Vector3} from "three";
 import {toJS} from "mobx";
 
-export type TBox = { id: number; }
+export type TBox = { boxElement: BoxElement; }
 
-export const BoxElementMesh: React.FC<TBox> = observer(({id}) => {
-    console.log('Мой ид:', id);
-    const canvasStore = useCanvasStore();
+export const BoxElementMesh: React.FC<TBox> = observer(({boxElement}) => {
     const mesh = useRef<THREE.Mesh>(null!);
-    const [state, setState] = useState<BoxElement>();
-    const me = canvasStore.renderedElementsMap[id];
-    useEffect(() => {
-        if (me) {
-            setState(me.value as BoxElement);
-        }
-    }, [canvasStore.renderedElementsMap, id, me]);
 
-    if (state) {
-        const width = Math.abs(state.startV2.x - state.endV2.x);
-        const height = Math.abs(state.startV2.y - state.endV2.y);
-        const depth = state.zIndex;
-        const position = new Vector3((state.endV2.x + state.startV2.x) / 2, (state.endV2.y + state.startV2.y) / 2, state.zIndex);
-        const material = new THREE.PointsMaterial({color: state.isSelected ? '#FFF000' : state.color});
+    if (boxElement) {
+        console.log(toJS(boxElement), boxElement.id);
+        const {startV2, endV2, zIndex, isSelected, color, id} = boxElement;
+        const width = Math.abs(startV2.x - endV2.x);
+        const height = Math.abs(startV2.y - endV2.y);
+        const depth = zIndex;
+        const position = new Vector3((endV2.x + startV2.x) / 2, (endV2.y + startV2.y) / 2, zIndex);
+        const material = new THREE.PointsMaterial({color: isSelected ? '#FFF000' : color});
 
         return (
             <Suspense fallback={null}>
