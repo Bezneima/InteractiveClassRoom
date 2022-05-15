@@ -1,6 +1,4 @@
 import React, {Suspense, useEffect, useRef} from "react";
-import * as THREE from "three";
-import {DashBoardElementType} from "../../types";
 import {Vector3} from "three";
 import {useCanvasStore} from "../../../../../Store/hooks";
 import {useThree} from "@react-three/fiber";

@@ -15,7 +15,7 @@ export const Camera = () => {
     const {camera} = useThree();
 
     const render = useCallback(() => {
-        camera.position.set(cameraPos.current.x, cameraPos.current.y, 1);
+        camera.position.set(cameraPos.current.x, cameraPos.current.y, camera.position.z);
         canvasStore.onCameraMove(cameraPos.current.x, cameraPos.current.y);
         camera.zoom = cameraPos.current.zoom;
         camera.updateProjectionMatrix();

@@ -1,4 +1,4 @@
-export enum ECreationsStages {
+export enum EMouseStages {
     start,
     move,
     end

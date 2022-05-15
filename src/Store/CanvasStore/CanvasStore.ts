@@ -2,20 +2,25 @@ import {action, makeAutoObservable, observable} from "mobx";
 import {ECanvasMode, RenderedElement, TRenderedElementsMap, TSelection} from "./types";
 import {Vector2} from "three";
 import {createBox} from "../../Components/Common/DashBoard/Core/CreateElementService/CreateElementService";
-import {ECreationsStages} from "../../Components/Common/DashBoard/Core/CreateElementService/types";
+import {EMouseStages} from "../../Components/Common/DashBoard/Core/CreateElementService/types";
+import {selectArea} from "../../Components/Common/DashBoard/Core/SelectionService/SelectionService";
 
 export default class CanvasStore {
     mode: ECanvasMode = ECanvasMode.SelectMode;
     canvasWidth: number;
     canvasHeight: number;
+
     cameraPosX: number;
     cameraPosY: number;
-    selection?: TSelection;
-    isSelecting: boolean = false;
-    isMoved: boolean = false;
+
     selectedElements = observable<RenderedElement>([])
     renderedElements = observable<RenderedElement>([]);
     renderedElementsMap: TRenderedElementsMap = {};
+
+    selection = observable<TSelection>({isSelecting: true});
+    isSelecting: boolean = false;
+    isMoved: boolean = false;
+
 
     constructor() {
         makeAutoObservable(this);
@@ -52,10 +57,10 @@ export default class CanvasStore {
         this.isMoved = false;
         switch (this.mode) {
             case ECanvasMode.SelectMode:
-                console.log('Селектид элемент', this.selectedElements);
+                selectArea(EMouseStages.start, this.selection, this.renderedElementsMap, this.renderedElements, this.selectedElements, mouse);
                 break;
             case ECanvasMode.CreateBoxMode:
-                createBox(ECreationsStages.start, this.renderedElementsMap, this.renderedElements, this.selectedElements, mouse);
+                createBox(EMouseStages.start, this.renderedElementsMap, this.renderedElements, this.selectedElements, mouse);
                 break;
         }
     }
@@ -65,9 +70,10 @@ export default class CanvasStore {
         this.isMoved = true;
         switch (this.mode) {
             case ECanvasMode.SelectMode:
+                selectArea(EMouseStages.move, this.selection, this.renderedElementsMap, this.renderedElements, this.selectedElements, mouse);
                 break;
             case ECanvasMode.CreateBoxMode:
-                createBox(ECreationsStages.move, this.renderedElementsMap, this.renderedElements, this.selectedElements, mouse);
+                createBox(EMouseStages.move, this.renderedElementsMap, this.renderedElements, this.selectedElements, mouse);
                 break;
         }
     }
@@ -76,18 +82,13 @@ export default class CanvasStore {
     selectionPointerUp(mouse: Vector2) {
         switch (this.mode) {
             case ECanvasMode.SelectMode:
+                selectArea(EMouseStages.end, this.selection, this.renderedElementsMap, this.renderedElements, this.selectedElements, mouse, this.isMoved);
                 break;
             case ECanvasMode.CreateBoxMode:
-                console.log('isMoved', this.isMoved);
-                createBox(ECreationsStages.end, this.renderedElementsMap, this.renderedElements, this.selectedElements, mouse, this.isMoved);
+                createBox(EMouseStages.end, this.renderedElementsMap, this.renderedElements, this.selectedElements, mouse, this.isMoved);
                 break;
         }
         this.isMoved = false;
-    }
-
-    @action.bound
-    moveBox(mouse: Vector2) {
-
     }
 
 }
