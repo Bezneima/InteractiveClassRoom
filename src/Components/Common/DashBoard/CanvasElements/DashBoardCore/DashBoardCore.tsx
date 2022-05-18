@@ -26,6 +26,8 @@ export const DashBoardCore: React.FC = () => {
             <Canvas
                 resize={{scroll: false}}
                 orthographic
+
+                camera={{position:[0,0,100]}}
                 style={{width: '100wh', height: '100vh', zIndex: 0}}
             >
                 {/*<ContextBridge>*/}

@@ -12,7 +12,7 @@ export const UserUIElements: React.FC = observer(() => {
     if (selection) {
         const {startV2, endV2, isSelecting} = selection;
         if(startV2 && endV2 && isSelecting) {
-            const newSelectionBox = new SelectionBox('selectionBox', 'Pavel Kucher', startV2, endV2, 0.1, isSelecting);
+            const newSelectionBox = new SelectionBox('selectionBox', 'Pavel Kucher', startV2, endV2, 65, isSelecting);
             rendered.push(<SelectionBoxMesh key={'selectionBox'} selectionBox={newSelectionBox}/>);
         }
     }

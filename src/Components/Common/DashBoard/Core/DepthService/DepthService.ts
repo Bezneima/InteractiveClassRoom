@@ -13,7 +13,6 @@ class DepthService {
     lastMovedToFrontElem = new Map<RenderedElement, boolean>();
 
     moveElementToFront(neededElement: RenderedElement, renderedElements: IObservableArray<RenderedElement>) {
-        console.log('Надо подвинуть вперед',toJS(neededElement),toJS(renderedElements));
         if (neededElement && renderedElements) {
             const inputElementZIndex = neededElement.zIndex;
             let maxZIndex = -1;
@@ -60,7 +59,6 @@ class DepthService {
             return movedToFrontElement;
         } else {
             if (minimumElement) {
-                console.log('Был в мин элементе', toJS(this.lastMovedToFrontElem), minimumElement);
                 this.lastMovedToFrontElem = new Map<RenderedElement, boolean>([[minimumElement, true]]);
                 this.moveElementToFront(minimumElement, renderedElements);
                 return minimumElement;
